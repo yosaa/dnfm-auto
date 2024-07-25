@@ -8,6 +8,7 @@ import random
 
 class GameControl:
     def __init__(self, adb: scrcpyQt, window_title):
+        self.user = "NM"
         self.level = 0
         self.window_title = window_title
         self.adb = adb
@@ -19,7 +20,7 @@ class GameControl:
             (0.62, 0.88), (0.68, 0.88), (0.77, 0.77), (0.65, 0.77)
         ]
         self.skillJX = [
-            (0.43, 0.87)
+            (0.407, 0.9)
         ]
         self.skillBuff = [
             (0.87, 0.67)
@@ -119,6 +120,10 @@ class GameControl:
             self.attackJ()
             # self.attackJX()
 
+    def attackFixed(self, roomNum: int):
+        if self.user == "NM":
+            print("房间" + str(roomNum) + "固定打法")
+
     def addBuff(self, t: float = 0.01):
         x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * self.skillBuff[0][0]),
                 self.windowsInfo[1] + (self.windowsInfo[3] * self.skillBuff[0][1]))
@@ -127,21 +132,22 @@ class GameControl:
         self.adb.touch_end(x, y)
 
     def clickAgain(self):
-        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * self.skillBuff[0][0]),
-                self.windowsInfo[1] + (self.windowsInfo[3] * self.skillBuff[0][1]))
-        self.adb.touch_start(x, y)
+        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * 0.86),
+                self.windowsInfo[1] + (self.windowsInfo[3] * 0.25))
+        self.adb.tap(x, y)
+        self.adb.tap(x, y)
 
     def getItemHeight(self):
         return self.windowsInfo[3] * 0.07
-    
+
     def clickMap(self):
-        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * 0.91),
-                self.windowsInfo[1] + (self.windowsInfo[3] * 0.11))
-        self.adb.touch_start(x, y)
+        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * 0.909),
+                self.windowsInfo[1] + (self.windowsInfo[3] * 0.129))
+        self.adb.tap(x, y)
 
     def getMapXY(self):
-        return [self.windowsInfo[0] + (self.windowsInfo[2] * 0.369), self.windowsInfo[1] + (self.windowsInfo[3] * 0.366),
-                self.windowsInfo[0] + (self.windowsInfo[2] * 0.495), self.windowsInfo[1] + (self.windowsInfo[3] * 0.637)]
+        return [(self.windowsInfo[2] * 0.380),  (self.windowsInfo[3] * 0.380),
+                (self.windowsInfo[2] * 0.629),  (self.windowsInfo[3] * 0.637)]
 
     def get_window_xy(self):
         try:
