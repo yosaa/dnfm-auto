@@ -132,8 +132,8 @@ class GameControl:
                 self.getSkillXY_NM(3)
             elif roomNum == 7:
                 self.move(0, 0.1)
-                self.getSkillXY_NM(1)
                 self.getSkillXY_NM(6)
+                self.getSkillXY_NM(1)
                 self.move(270, 1)
                 self.move(0, 0.5)
                 self.getSkillXY_NM(2)
@@ -145,10 +145,11 @@ class GameControl:
             elif roomNum == 14:
                 self.getSkillXY_NM(5)
                 self.getSkillXY_NM(0)
-                time.sleep(3)
-            elif roomNum == 15:
-                self.getSkillXY_NM(4)
                 time.sleep(0.5)
+            elif roomNum == 15:
+                self.move(90, 0.3)
+                self.getSkillXY_NM(4)
+                time.sleep(1)
             elif roomNum == 9:
                 print("狮子房间使用觉醒")
             elif roomNum == 8:
@@ -163,7 +164,7 @@ class GameControl:
                 print("进入boss")
                 self.getSkillXY_NM(5)
                 self.getSkillXY_NM(0)
-                time.sleep(3)
+                time.sleep(5)
 
     def getSkillXY_NM(self, skillNum: int):
         x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * self.skillNM[skillNum][0]),

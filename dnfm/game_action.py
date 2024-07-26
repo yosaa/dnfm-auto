@@ -243,10 +243,8 @@ class GameAction:
         while roomNum != 8:
             self.ctrl.move(180, 2)
             self.ctrl.move(0, 0.3)
-            self.ctrl.move(90, 0.5)
+            self.ctrl.move(90, 0.4)
             self.ctrl.move(180, 1)
-            self.ctrl.move(0, 0.1)
-            self.ctrl.move(270, 0.5)
             roomNum = self.judge_room_num()
 
         self.ctrl.attackJX()
