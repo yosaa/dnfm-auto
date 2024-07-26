@@ -113,7 +113,9 @@ class GameAction:
                 if unBuff:
                     self.ctrl.addBuff()
                     unBuff = False
-                    self.ctrl.attackFixed(0)
+                    self.roomNum = self.judge_room_num()
+                    if self.roomNum == 7:
+                        self.ctrl.attackFixed(0)
                 hero = hero[0]
                 hx, hy = get_detect_obj_bottom(hero)
                 cv.circle(screen, (hx, hy), 5, (0, 0, 125), 5)
@@ -145,10 +147,15 @@ class GameAction:
                         continue
                     elif self.roomNum == 10:
                         self.unSZT = False
-
                 print("开始寻路")
                 min_distance_arrow = min(
                     arrow, key=lambda a: distance_detect_object(hero, a))
+                # 标志可能在脚下
+                if len(arrow) >= 2:
+                    min_distance_arrow_second = min(
+                        (a for a in arrow if a != min_distance_arrow),
+                        key=lambda a: distance_detect_object(hero, a))
+                    min_distance_arrow = min_distance_arrow_second
             elif len(gate) != 0:
                 print("发现门")
                 min_distance_arrow = min(
@@ -349,7 +356,7 @@ def match_template(main_image, sub_image):
         if m.distance < 0.7 * n.distance:
             good_matches.append(m)
 
-    MIN_MATCH_COUNT = 12
+    MIN_MATCH_COUNT = 10
     if len(good_matches) > MIN_MATCH_COUNT:
         return True
     else:

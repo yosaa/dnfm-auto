@@ -27,9 +27,9 @@ class GameControl:
         ]
         # 0大锤、1领悟之雷、2往前推的盾、3矛、4唱小歌、5禁锢锁链、6挥三棒、7沐天之光、
         self.skillNM = [
-            (0.49, 0.87),(0.54,0.90),(0.62, 0.88),(0.68,0.9),(0.65,0.79),(0.72,0.78),(0.78,0.796),(0.83,0.78)
+            (0.49, 0.87), (0.54, 0.90), (0.62, 0.88), (0.68, 0.9), (0.65,
+                                                                    0.79), (0.72, 0.78), (0.78, 0.796), (0.83, 0.78)
         ]
-
 
     def calc_mov_point(self, angle: float) -> Tuple[int, int]:
         rx, ry = (self.windowsInfo[0] + (self.windowsInfo[2] * 0.1646),
@@ -105,7 +105,6 @@ class GameControl:
         for _ in range(4):
             self.adb.tap(x, y)
 
-
     def attackCombine(self, num: int):
         num += self.level
         if num == 1:
@@ -127,15 +126,16 @@ class GameControl:
     def attackFixed(self, roomNum: int):
         if self.user == "NM":
             print("(前一个)房间" + str(roomNum + 1) + "固定打法")
-            if random == 0:
+            if roomNum == 0:
+                self.getSkillXY_NM(5)
                 self.getSkillXY_NM(7)
-                self.getSkillXY_NM(3) 
+                self.getSkillXY_NM(3)
             elif roomNum == 7:
-                self.move(0, 0.1) 
+                self.move(0, 0.1)
                 self.getSkillXY_NM(1)
                 self.getSkillXY_NM(6)
                 self.move(270, 1)
-                self.move(0, 0.5) 
+                self.move(0, 0.5)
                 self.getSkillXY_NM(2)
                 time.sleep(0.3)
             elif roomNum == 13:
@@ -167,7 +167,7 @@ class GameControl:
 
     def getSkillXY_NM(self, skillNum: int):
         x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * self.skillNM[skillNum][0]),
-        self.windowsInfo[1] + (self.windowsInfo[3] * self.skillNM[skillNum][1]))
+                self.windowsInfo[1] + (self.windowsInfo[3] * self.skillNM[skillNum][1]))
         self.adb.tap(x, y)
         self.adb.tap(x, y)
         return x, y
