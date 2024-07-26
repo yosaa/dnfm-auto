@@ -350,7 +350,7 @@ def match_template(main_image, sub_image):
         if m.distance < 0.7 * n.distance:
             good_matches.append(m)
 
-    MIN_MATCH_COUNT = 12
+    MIN_MATCH_COUNT = 10
     if len(good_matches) > MIN_MATCH_COUNT:
         return True
     else:
