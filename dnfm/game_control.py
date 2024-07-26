@@ -127,7 +127,7 @@ class GameControl:
     def attackFixed(self, roomNum: int):
         if self.user == "NM":
             print("(前一个)房间" + str(roomNum + 1) + "固定打法")
-            if random == 0:
+            if roomNum == 0:
                 self.getSkillXY_NM(7)
                 self.getSkillXY_NM(3) 
             elif roomNum == 7:
