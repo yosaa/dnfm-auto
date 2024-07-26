@@ -14,7 +14,7 @@ class GameControl:
         self.adb = adb
         self.get_window_xy()
         self.skillY = [
-            (0.51, 0.88), (0.71, 0.77), (0.74, 0.88), (0.84, 0.77)
+            (0.49, 0.87), (0.71, 0.77), (0.74, 0.88), (0.84, 0.77)
         ]
         self.skillJ = [
             (0.62, 0.88), (0.68, 0.88), (0.77, 0.77), (0.65, 0.77)
@@ -25,6 +25,11 @@ class GameControl:
         self.skillBuff = [
             (0.87, 0.67)
         ]
+        # 0大锤、1领悟之雷、2往前推的盾、3矛、4唱小歌、5禁锢锁链、6挥三棒、7沐天之光、
+        self.skillNM = [
+            (0.49, 0.87),(0.54,0.90),(0.62, 0.88),(0.68,0.9),(0.65,0.79),(0.72,0.78),(0.78,0.796),(0.83,0.78)
+        ]
+
 
     def calc_mov_point(self, angle: float) -> Tuple[int, int]:
         rx, ry = (self.windowsInfo[0] + (self.windowsInfo[2] * 0.1646),
@@ -97,10 +102,9 @@ class GameControl:
     def attackJX(self, t: float = 0.01):
         x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * self.skillJX[0][0]),
                 self.windowsInfo[1] + (self.windowsInfo[3] * self.skillJX[0][1]))
-        for _ in range(1):
-            self.adb.touch_start(x, y)
-        time.sleep(t)
-        self.adb.touch_end(x, y)
+        for _ in range(4):
+            self.adb.tap(x, y)
+
 
     def attackCombine(self, num: int):
         num += self.level
@@ -122,13 +126,57 @@ class GameControl:
 
     def attackFixed(self, roomNum: int):
         if self.user == "NM":
-            print("房间" + str(roomNum) + "固定打法")
+            print("(前一个)房间" + str(roomNum + 1) + "固定打法")
+            if random == 0:
+                self.getSkillXY_NM(7)
+                self.getSkillXY_NM(3) 
+            elif roomNum == 7:
+                self.move(0, 0.1) 
+                self.getSkillXY_NM(1)
+                self.getSkillXY_NM(6)
+                self.move(270, 1)
+                self.move(0, 0.5) 
+                self.getSkillXY_NM(2)
+                time.sleep(0.3)
+            elif roomNum == 13:
+                time.sleep(1)
+                self.getSkillXY_NM(6)
+                time.sleep(0.5)
+            elif roomNum == 14:
+                self.getSkillXY_NM(5)
+                self.getSkillXY_NM(0)
+                time.sleep(3)
+            elif roomNum == 15:
+                self.getSkillXY_NM(4)
+                time.sleep(0.5)
+            elif roomNum == 9:
+                print("狮子房间使用觉醒")
+            elif roomNum == 8:
+                self.getSkillXY_NM(1)
+                self.getSkillXY_NM(3)
+                time.sleep(1)
+            elif roomNum == 10:
+                self.getSkillXY_NM(7)
+                self.getSkillXY_NM(2)
+                time.sleep(2)
+            elif roomNum == 11:
+                print("进入boss")
+                self.getSkillXY_NM(5)
+                self.getSkillXY_NM(0)
+                time.sleep(3)
+
+    def getSkillXY_NM(self, skillNum: int):
+        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * self.skillNM[skillNum][0]),
+        self.windowsInfo[1] + (self.windowsInfo[3] * self.skillNM[skillNum][1]))
+        self.adb.tap(x, y)
+        self.adb.tap(x, y)
+        return x, y
 
     def addBuff(self, t: float = 0.01):
         x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * self.skillBuff[0][0]),
                 self.windowsInfo[1] + (self.windowsInfo[3] * self.skillBuff[0][1]))
         self.adb.touch_start(x, y)
-        self.adb.touch_move(x, y - 25)
+        self.adb.touch_move(x, y - 35)
         self.adb.touch_end(x, y)
 
     def clickAgain(self):
@@ -141,8 +189,8 @@ class GameControl:
         return self.windowsInfo[3] * 0.07
 
     def clickMap(self):
-        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * 0.909),
-                self.windowsInfo[1] + (self.windowsInfo[3] * 0.129))
+        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * 0.90),
+                self.windowsInfo[1] + (self.windowsInfo[3] * 0.186))
         self.adb.tap(x, y)
 
     def getMapXY(self):
@@ -169,8 +217,7 @@ if __name__ == '__main__':
     ctl = GameControl(scrcpyQt(window_title), window_title)
     ctl.get_window_xy()
 
-    ctl.addBuff(0.1)
-    ctl.move(90, 1)
+    ctl.attackFixed(1)
     # ctl.move(180, 1)  # 左
     # ctl.move(0, 1)  # 右
     # ctl.move(90, 1)  # 上

@@ -98,10 +98,9 @@ class GameAction:
                 noHeroCount += 1
                 hero = None
                 if (len(monster) >= 4):
+                    mov_start = False
                     print("未找到英雄，但是当前怪物数量：" + str(len(monster)) + "尝试进行攻击")
                     self.fixedAttack()
-                    self.ctrl.attackY()
-                    self.ctrl.attackY()
                     # self.ctrl.attackCombine(len(monster))
                 elif (noHeroCount > 3):
                     noHeroCount = 0
@@ -114,6 +113,7 @@ class GameAction:
                 if unBuff:
                     self.ctrl.addBuff()
                     unBuff = False
+                    self.ctrl.attackFixed(0)
                 hero = hero[0]
                 hx, hy = get_detect_obj_bottom(hero)
                 cv.circle(screen, (hx, hy), 5, (0, 0, 125), 5)
@@ -125,7 +125,9 @@ class GameAction:
             if len(monster) != 0:
                 mov_start = False
                 print("发现怪物: " + str(len(monster)))
-                self.fixedAttack()
+                fixedAttack = self.fixedAttack()
+                if fixedAttack == True:
+                    continue
                 min_distance_arrow = min(
                     monster, key=lambda a: distance_detect_object(hero, a))
             elif len(item) != 0:
@@ -212,6 +214,9 @@ class GameAction:
         if self.next_room:
             self.ctrl.attackFixed(self.roomNum)
             self.next_room = False
+            return True
+        else:
+            return False
 
     def judge_room_num(self):
         # 判断房间号
