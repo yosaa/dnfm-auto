@@ -8,7 +8,8 @@ import random
 
 class GameControl:
     def __init__(self, adb: scrcpyQt, window_title):
-        self.user = "NM"
+        # 奶妈 NM 、 鬼泣 GQ
+        self.user = "GQ"
         self.level = 0
         self.window_title = window_title
         self.adb = adb
@@ -25,10 +26,19 @@ class GameControl:
         self.skillBuff = [
             (0.87, 0.67)
         ]
+        self.skillBuff2 = [
+            (0.87, 0.67)
+        ]
         # 0大锤、1领悟之雷、2往前推的盾、3矛、4唱小歌、5禁锢锁链、6挥三棒、7沐天之光、
         self.skillNM = [
             (0.49, 0.87), (0.54, 0.90), (0.62, 0.88), (0.68, 0.9), (0.65,
                                                                     0.79), (0.72, 0.78), (0.78, 0.796), (0.83, 0.78)
+        ]
+        # 0鬼影闪、1四阵、2鬼影剑、3鬼影鞭、4冥炎三、5鬼斩、6鬼月绝、7墓碑、
+        self.skillGQ = [
+            (0.68, 0.9), (0.72, 0.78), (0.62, 0.88), (0.78, 0.796), (0.83,
+                                                                     0.78), (0.72, 0.78), (0.65,
+                                                                                           0.79), (0.54, 0.90)
         ]
 
     def calc_mov_point(self, angle: float) -> Tuple[int, int]:
@@ -124,51 +134,22 @@ class GameControl:
             # self.attackJX()
 
     def attackFixed(self, roomNum: int):
+        print("(前一个)房间" + str(roomNum + 1) + "固定打法")
         if self.user == "NM":
-            print("(前一个)房间" + str(roomNum + 1) + "固定打法")
-            if roomNum == 0:
-                self.getSkillXY_NM(5)
-                self.getSkillXY_NM(7)
-                self.getSkillXY_NM(3)
-            elif roomNum == 7:
-                self.move(0, 0.1)
-                self.getSkillXY_NM(6)
-                self.getSkillXY_NM(1)
-                self.move(270, 1)
-                self.move(0, 0.5)
-                self.getSkillXY_NM(2)
-                time.sleep(0.3)
-            elif roomNum == 13:
-                time.sleep(1)
-                self.getSkillXY_NM(6)
-                time.sleep(0.5)
-            elif roomNum == 14:
-                self.getSkillXY_NM(5)
-                self.getSkillXY_NM(0)
-                time.sleep(0.5)
-            elif roomNum == 15:
-                self.move(90, 0.3)
-                self.getSkillXY_NM(4)
-                time.sleep(1)
-            elif roomNum == 9:
-                print("狮子房间使用觉醒")
-            elif roomNum == 8:
-                self.getSkillXY_NM(1)
-                self.getSkillXY_NM(3)
-                time.sleep(1)
-            elif roomNum == 10:
-                self.getSkillXY_NM(7)
-                self.getSkillXY_NM(2)
-                time.sleep(2)
-            elif roomNum == 11:
-                print("进入boss")
-                self.getSkillXY_NM(5)
-                self.getSkillXY_NM(0)
-                time.sleep(5)
+            self.NMFixed(roomNum)
+        if self.user == "GQ":
+            self.GQFixed(roomNum)
 
-    def getSkillXY_NM(self, skillNum: int):
-        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * self.skillNM[skillNum][0]),
-                self.windowsInfo[1] + (self.windowsInfo[3] * self.skillNM[skillNum][1]))
+    def getSkillXY(self, skillNum: int):
+        if self.user == 'NM':
+            skill = self.skillNM
+        elif self.user == 'GQ':
+            skill = self.skillGQ
+        else:
+            raise ValueError("无法识别当前人物类型")
+
+        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * skill[skillNum][0]),
+                self.windowsInfo[1] + (self.windowsInfo[3] * skill[skillNum][1]))
         self.adb.tap(x, y)
         self.adb.tap(x, y)
         return x, y
@@ -178,6 +159,13 @@ class GameControl:
                 self.windowsInfo[1] + (self.windowsInfo[3] * self.skillBuff[0][1]))
         self.adb.touch_start(x, y)
         self.adb.touch_move(x, y - 35)
+        self.adb.touch_end(x, y)
+
+    def addBuff2(self, t: float = 0.01):
+        x, y = (self.windowsInfo[0] + (self.windowsInfo[2] * self.skillBuff[0][0]),
+                self.windowsInfo[1] + (self.windowsInfo[3] * self.skillBuff[0][1]))
+        self.adb.touch_start(x, y)
+        self.adb.touch_move(x, y + 35)
         self.adb.touch_end(x, y)
 
     def clickAgain(self):
@@ -211,6 +199,95 @@ class GameControl:
 
         except Exception as e:
             print(f"未找到窗口: {e}")
+
+    def NMFixed(self, roomNum: int):
+        if roomNum == 0:
+            self.getSkillXY(5)
+            self.getSkillXY(7)
+            self.getSkillXY(3)
+        elif roomNum == 7:
+            self.move(0, 0.1)
+            self.getSkillXY(6)
+            self.getSkillXY(1)
+            self.move(270, 1)
+            self.move(0, 0.5)
+            self.getSkillXY(2)
+            time.sleep(0.3)
+        elif roomNum == 13:
+            time.sleep(1)
+            self.getSkillXY(6)
+            time.sleep(0.5)
+        elif roomNum == 14:
+            self.getSkillXY(5)
+            self.getSkillXY(0)
+            time.sleep(0.5)
+        elif roomNum == 15:
+            self.move(90, 0.3)
+            self.getSkillXY(4)
+            time.sleep(1)
+        elif roomNum == 9:
+            print("狮子房间使用觉醒")
+        elif roomNum == 8:
+            self.getSkillXY(1)
+            self.getSkillXY(3)
+            time.sleep(1)
+        elif roomNum == 10:
+            self.getSkillXY(7)
+            self.getSkillXY(2)
+            time.sleep(2)
+        elif roomNum == 11:
+            print("进入boss")
+            self.getSkillXY(5)
+            self.getSkillXY(0)
+            time.sleep(5)
+
+     # 0鬼影闪、1四阵、2鬼影剑、3鬼影鞭、4冥炎三、5鬼斩、6鬼月绝、7墓碑
+    def GQFixed(self, roomNum: int):
+        if roomNum == 0:
+            self.addBuff2()
+            self.getSkillXY(0)
+            time.sleep(0.5)
+        elif roomNum == 7:
+            self.move(0, 0.1)
+            self.getSkillXY(7)
+            self.getSkillXY(3)
+            self.move(0, 0.2)
+            time.sleep(2)
+            self.getSkillXY(1)
+            self.getSkillXY(1)
+            time.sleep(0.3)
+        elif roomNum == 13:
+            time.sleep(1)
+            self.getSkillXY(2)
+            self.getSkillXY(3)
+            time.sleep(0.5)
+        elif roomNum == 14:
+            self.getSkillXY(1)
+            self.getSkillXY(1)
+            self.getSkillXY(3)
+            time.sleep(2)
+        elif roomNum == 15:
+            self.move(90, 0.3)
+            self.getSkillXY(7)
+            time.sleep(1)
+        elif roomNum == 9:
+            print("狮子房间使用觉醒")
+        elif roomNum == 8:
+            self.move(0, 0.2)
+            self.getSkillXY(0)
+            self.getSkillXY(7)
+            time.sleep(1)
+        elif roomNum == 10:
+            time.sleep(1)
+            self.getSkillXY(2)
+            self.getSkillXY(3)
+            time.sleep(2)
+        elif roomNum == 11:
+            print("进入boss")
+            self.move(0, 0.4)
+            self.getSkillXY(4)
+            self.getSkillXY(7)
+            time.sleep(5)
 
 
 if __name__ == '__main__':

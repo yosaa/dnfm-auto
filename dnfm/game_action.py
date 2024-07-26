@@ -101,6 +101,7 @@ class GameAction:
                     mov_start = False
                     print("未找到英雄，但是当前怪物数量：" + str(len(monster)) + "尝试进行攻击")
                     self.fixedAttack()
+                    continue
                     # self.ctrl.attackCombine(len(monster))
                 elif (noHeroCount > 3):
                     noHeroCount = 0
@@ -137,6 +138,8 @@ class GameAction:
                 thisTimeIsItems = True
                 min_distance_arrow = min(
                     item, key=lambda a: distance_detect_object(hero, a))
+                if mov_start and not AGAIN:
+                    mov_start = False
             elif len(arrow) != 0:
                 if not mov_start:
                     self.next_room = True
@@ -145,7 +148,8 @@ class GameAction:
                         # 移动到狮子头位置
                         self.move_to_SZT(self.roomNum)
                         continue
-                    elif self.roomNum == 10:
+                    elif self.roomNum == 8:
+                        self.ctrl.move(270, 0.5)
                         self.unSZT = False
                 print("开始寻路")
                 min_distance_arrow = min(
@@ -158,6 +162,7 @@ class GameAction:
                     min_distance_arrow = min_distance_arrow_second
             elif len(gate) != 0:
                 print("发现门")
+                self.roomNum = self.judge_room_num()
                 min_distance_arrow = min(
                     gate, key=lambda a: distance_detect_object(hero, a))
             elif AGAIN:
@@ -240,7 +245,14 @@ class GameAction:
 
     def move_to_SZT(self, roomNum):
         print("识别到狮子头")
+        fail_times = 0
         while roomNum != 8:
+            fail_times += 1
+            if fail_times >= 2:
+                self.ctrl.move(0, 0.2)
+                self.ctrl.move(270, 0.2)
+                self.ctrl.move(180, 0.1)
+                roomNum = self.judge_room_num()
             self.ctrl.move(180, 2)
             self.ctrl.move(0, 0.3)
             self.ctrl.move(90, 0.4)
