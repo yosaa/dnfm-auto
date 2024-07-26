@@ -161,6 +161,7 @@ class GameAction:
                     self.ctrl.clickAgain()
                     time.sleep(4)
                     again_times = 0
+                    self.roomNum = 0
                 elif again_times == 0:
                     print("准备开始下一局，看看右边有什么没捡的")
                     self.moves[1]()
