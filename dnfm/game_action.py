@@ -119,6 +119,7 @@ class GameAction:
                     self.roomNum = self.judge_room_num()
                     if self.roomNum == 7:
                         self.ctrl.attackFixed(0)
+                        continue
                 hero = hero[0]
                 hx, hy = get_detect_obj_bottom(hero)
                 cv.circle(screen, (hx, hy), 5, (0, 0, 125), 5)
@@ -167,7 +168,6 @@ class GameAction:
                     min_distance_arrow = min_distance_arrow_second
             elif len(gate) != 0:
                 print("发现门")
-                self.roomNum = self.judge_room_num()
                 min_distance_arrow = min(
                     gate, key=lambda a: distance_detect_object(hero, a))
             elif AGAIN:
@@ -182,11 +182,9 @@ class GameAction:
                 elif again_times == 0:
                     print("准备开始下一局，看看右边有什么没捡的")
                     self.moves[1]()
-                    self.moves[1]()
                     again_times += 1
                 else:
                     print("准备开始下一局，看看左边有什么没捡的")
-                    self.moves[1]()
                     self.moves[0]()
                     self.moves[0]()
                     again_times += 1
@@ -211,7 +209,7 @@ class GameAction:
             sx, sy = self.ctrl.calc_mov_point(angle)
 
             if len(monster) != 0:
-                self.adb.tap(sx, sy, move_t)
+                self.adb.tap(sx, sy, move_t * 0.7)
                 print("攻击怪物")
                 self.ctrl.attackCombine(len(monster))
 
@@ -221,6 +219,8 @@ class GameAction:
                 self.adb.tap(sx, sy, 0.5)
                 mov_start = True
             else:
+                if len(arrow) > 3:
+                    self.adb.tap(sx, sy, 2)
                 self.adb.tap(sx, sy, move_t)
 
             cv.imshow('screen', screen)

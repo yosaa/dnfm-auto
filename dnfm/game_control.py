@@ -9,7 +9,7 @@ import random
 class GameControl:
     def __init__(self, adb: scrcpyQt, window_title):
         # 奶妈 NM 、 鬼泣 GQ
-        self.user = "GQ"
+        self.user = "NM"
         self.level = 0
         self.window_title = window_title
         self.adb = adb
@@ -204,17 +204,17 @@ class GameControl:
         if roomNum == 0:
             self.getSkillXY(5)
             self.getSkillXY(7)
-            self.getSkillXY(3)
         elif roomNum == 7:
             self.move(0, 0.1)
-            self.getSkillXY(6)
-            self.getSkillXY(1)
-            self.move(270, 1)
-            self.move(0, 0.5)
             self.getSkillXY(2)
+            self.getSkillXY(6)
+            self.move(270, 0.5)
+            time.sleep(2)
+            self.getSkillXY(4)
             time.sleep(0.3)
         elif roomNum == 13:
             time.sleep(1)
+            self.getSkillXY(2)
             self.getSkillXY(6)
             time.sleep(0.5)
         elif roomNum == 14:
@@ -228,12 +228,13 @@ class GameControl:
         elif roomNum == 9:
             print("狮子房间使用觉醒")
         elif roomNum == 8:
+            self.getSkillXY(2)
             self.getSkillXY(1)
             self.getSkillXY(3)
             time.sleep(1)
         elif roomNum == 10:
-            self.getSkillXY(7)
             self.getSkillXY(2)
+            self.getSkillXY(1)
             time.sleep(2)
         elif roomNum == 11:
             print("进入boss")
@@ -248,6 +249,7 @@ class GameControl:
             self.getSkillXY(0)
             time.sleep(0.5)
         elif roomNum == 7:
+            self.getSkillXY(2)
             self.move(0, 0.1)
             self.getSkillXY(7)
             self.getSkillXY(3)
