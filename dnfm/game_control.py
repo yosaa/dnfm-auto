@@ -134,7 +134,7 @@ class GameControl:
             # self.attackJX()
 
     def attackFixed(self, roomNum: int):
-        print("(前一个)房间" + str(roomNum + 1) + "固定打法")
+        print("(前一个)房间" + str(roomNum) + "固定打法")
         if self.user == "NM":
             self.NMFixed(roomNum)
         if self.user == "GQ":
