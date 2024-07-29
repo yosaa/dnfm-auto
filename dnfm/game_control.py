@@ -222,9 +222,3 @@ if __name__ == '__main__':
     # ctl.move(0, 1)  # 右
     # ctl.move(90, 1)  # 上
     # ctl.move(270, 1)  # 下
-
-    # ctl.attack()
-    # time.sleep(0.3)
-    # ctl.move(270, 5)
-    # time.sleep(0.3)
-    # ctl.attack(3)

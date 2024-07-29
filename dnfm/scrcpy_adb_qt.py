@@ -116,8 +116,7 @@ class scrcpyQt:
 
 def main():
     window_title = "Phone-f0d62d51"
-    # simulator = scrcpyQt(window_title)
-    # window_image = simulator.on_frame()
+
 
 
 if __name__ == "__main__":
