@@ -26,6 +26,7 @@ def calc_angle(x1, y1, x2, y2):
 
 class GameAction:
     def __init__(self, ctrl: GameControl):
+        self.speed_ratio = 0.17
         self.ctrl = ctrl
         self.yolo = YoloV5s(target_size=640,
                             prob_threshold=0.25,
@@ -69,8 +70,8 @@ class GameAction:
 
             AGAIN = match_template(self.AGAIN, screen)
             # ada_image = cv.adaptiveThreshold(cv.cvtColor(
-            #     screen, cv.COLOR_BGR2GRAY), 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 13, 3)
-            # cv.imshow('ada_image', ada_image)
+            #     screen_row, cv.COLOR_BGR2GRAY), 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 13, 3)
+            # cv.imshow('ada_image', screen)
             # cv.waitKey(1)
             # if np.sum(ada_image) == 0:
             #     print('过图成功')
@@ -78,19 +79,20 @@ class GameAction:
             #     return
 
             result = self.yolo(screen)
-            # for obj in result:
-            #     color = (0, 255, 0)
-            #     if obj.label == 1:
-            #         color = (255, 0, 0)
-            #     elif obj.label == 5:
-            #         color = (0, 0, 255)
-            #     cv.rectangle(screen,
-            #                  (int(obj.rect.x), int(obj.rect.y)),
-            #                  (int(obj.rect.x + obj.rect.w),
-            #                   int(obj.rect.y + + obj.rect.h)),
-            #                  color, 2
-            #                  )
-
+            for obj in result:
+                color = (0, 255, 0)
+                if obj.label == 1:
+                    color = (255, 0, 0)
+                elif obj.label == 5:
+                    color = (0, 0, 255)
+                cv.rectangle(screen,
+                             (int(obj.rect.x), int(obj.rect.y)),
+                             (int(obj.rect.x + obj.rect.w),
+                              int(obj.rect.y + + obj.rect.h)),
+                             color, 2
+                             )
+            cv.imshow('ada_image', screen)
+            cv.waitKey(1)
             hero = [x for x in result if x.label == 1]
             monster = [x for x in result if x.label == 4]
             if len(hero) == 0:
@@ -101,6 +103,7 @@ class GameAction:
                     mov_start = False
                     print("未找到英雄，但是当前怪物数量：" + str(len(monster)) + "尝试进行攻击")
                     self.fixedAttack()
+                    continue
                     # self.ctrl.attackCombine(len(monster))
                 elif (noHeroCount > 3):
                     noHeroCount = 0
@@ -113,7 +116,10 @@ class GameAction:
                 if unBuff:
                     self.ctrl.addBuff()
                     unBuff = False
-                    self.ctrl.attackFixed(0)
+                    self.roomNum = self.judge_room_num()
+                    if self.roomNum == 7:
+                        self.ctrl.attackFixed(0)
+                        continue
                 hero = hero[0]
                 hx, hy = get_detect_obj_bottom(hero)
                 cv.circle(screen, (hx, hy), 5, (0, 0, 125), 5)
@@ -135,6 +141,8 @@ class GameAction:
                 thisTimeIsItems = True
                 min_distance_arrow = min(
                     item, key=lambda a: distance_detect_object(hero, a))
+                if mov_start and not AGAIN:
+                    mov_start = False
             elif len(arrow) != 0:
                 if not mov_start:
                     self.next_room = True
@@ -143,12 +151,21 @@ class GameAction:
                         # 移动到狮子头位置
                         self.move_to_SZT(self.roomNum)
                         continue
-                    elif self.roomNum == 10:
+                    elif self.roomNum == 8:
+                        self.ctrl.move(270, 0.5)
                         self.unSZT = False
-
                 print("开始寻路")
                 min_distance_arrow = min(
                     arrow, key=lambda a: distance_detect_object(hero, a))
+                # 标志可能在脚下
+                # if len(arrow) >= 3:
+                #     min_distance_arrow_second = max(
+                #         arrow, key=lambda a: distance_detect_object(hero, a))
+                if len(arrow) >= 2:
+                    min_distance_arrow_second = min(
+                        (a for a in arrow if a != min_distance_arrow),
+                        key=lambda a: distance_detect_object(hero, a))
+                    min_distance_arrow = min_distance_arrow_second
             elif len(gate) != 0:
                 print("发现门")
                 min_distance_arrow = min(
@@ -165,11 +182,9 @@ class GameAction:
                 elif again_times == 0:
                     print("准备开始下一局，看看右边有什么没捡的")
                     self.moves[1]()
-                    self.moves[1]()
                     again_times += 1
                 else:
                     print("准备开始下一局，看看左边有什么没捡的")
-                    self.moves[1]()
                     self.moves[0]()
                     self.moves[0]()
                     again_times += 1
@@ -182,8 +197,9 @@ class GameAction:
                 continue
 
             ax, ay = get_detect_obj_bottom(min_distance_arrow)
-            # cv.circle(screen, (hx, hy), 5, (0, 255, 0), 5)
-            # cv.arrowedLine(screen, (hx, hy), (ax, ay), (255, 0, 0), 3)
+            cv.circle(screen, (hx, hy), 5, (0, 255, 0), 5)
+            cv.arrowedLine(screen, (hx, hy), (ax, ay), (255, 0, 0), 3)
+            move_t = self.caculateTime(ax, ay, hx, hy)
 
             if thisTimeIsItems:
                 angle = calc_angle(hx, hy, ax, (ay + self.itemY))
@@ -193,23 +209,32 @@ class GameAction:
             sx, sy = self.ctrl.calc_mov_point(angle)
 
             if len(monster) != 0:
-                self.adb.tap(sx, sy, 0.1)
+                self.adb.tap(sx, sy, move_t * 0.7)
                 print("攻击怪物")
                 self.ctrl.attackCombine(len(monster))
 
             elif len(item) != 0:
-                self.adb.tap(sx, sy, 0.3)
+                self.adb.tap(sx, sy, move_t)
             elif not mov_start:
-                self.adb.tap(sx, sy, 0.2)
+                self.adb.tap(sx, sy, 0.5)
                 mov_start = True
             else:
-                self.adb.tap(sx, sy, 1)
+                if len(arrow) > 3:
+                    self.adb.tap(sx, sy, 2)
+                self.adb.tap(sx, sy, move_t)
 
-            # cv.imshow('screen', screen)
-            # cv.waitKey(2)
+            cv.imshow('screen', screen)
+            cv.waitKey(1)
             # 检查是否按下 'q' 键退出程序
             if cv.waitKey(1) & 0xFF == ord('q'):
                 keep_running = False
+
+    def caculateTime(self, ax, ay, hx, hy):
+        distance = math.sqrt((hx - ax)**2 + (hy - ay)**2)
+        move_t = distance / 497
+        # 497  31.8%
+
+        return move_t
 
     def fixedAttack(self):
         if self.next_room:
@@ -233,13 +258,18 @@ class GameAction:
 
     def move_to_SZT(self, roomNum):
         print("识别到狮子头")
+        fail_times = 0
         while roomNum != 8:
+            fail_times += 1
+            if fail_times >= 2:
+                self.ctrl.move(0, 0.2)
+                self.ctrl.move(270, 0.2)
+                self.ctrl.move(180, 0.1)
+                roomNum = self.judge_room_num()
             self.ctrl.move(180, 2)
             self.ctrl.move(0, 0.3)
-            self.ctrl.move(90, 0.5)
+            self.ctrl.move(90, 0.3)
             self.ctrl.move(180, 1)
-            self.ctrl.move(0, 0.1)
-            self.ctrl.move(270, 0.5)
             roomNum = self.judge_room_num()
 
         self.ctrl.attackJX()

@@ -86,8 +86,8 @@ class YoloV5s:
 
         # original pretrained model from https://github.com/ultralytics/yolov5
         # the ncnn model https://github.com/nihui/ncnn-assets/tree/master/models
-        self.net.load_param('bestv6.param')
-        self.net.load_model("bestv6.bin")
+        self.net.load_param('bestv7.param')
+        self.net.load_model("bestv7.bin")
 
         self.grid = [make_grid(10, 6), make_grid(20, 12), make_grid(40, 24)]
         self.stride = np.array([32, 16, 8])
@@ -112,7 +112,7 @@ class YoloV5s:
     def __call__(self, img):
         img_w = img.shape[1]
         img_h = img.shape[0]
-        #img_w, img_h = img.size
+        # img_w, img_h = img.size
 
         w = img_w
         h = img_h
