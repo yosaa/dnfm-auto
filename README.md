@@ -1,6 +1,6 @@
 ## 基于yolov5模型实现布万家自动化搬砖
 ### 项目根目录的demo_video.pm4为演示视频
-![demo_video2gif]([./demo_video.mp4](https://github.com/yosaa/dnfm-auto/blob/main/demo_video.gif))
+![demo_video2gif](https://github.com/yosaa/dnfm-auto/blob/main/demo_video.gif)
 
 ### 2024年07月30日，跑图效率不及预期，最佳情况也需要2分30秒+，实用性不高，暂不考虑继续更新
 
