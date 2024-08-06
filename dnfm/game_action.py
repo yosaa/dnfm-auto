@@ -6,6 +6,7 @@ import numpy as np
 from yolov5 import YoloV5s
 from game_control import GameControl
 from scrcpy_adb_qt import scrcpyQt
+import random
 from ncnn.utils.objects import Detect_Object
 
 def get_object_bottom(obj: Detect_Object) -> Tuple[int, int]:
@@ -186,17 +187,17 @@ class GameAction:
 
     def fixed_attack(self) -> bool:
         if self.next_room:
-            self.ctrl.attackFixed(self.roomNum)
+            self.ctrl.attack_fixed(self.roomNum)
             self.next_room = False
             return True
         return False
 
     def judge_room_num(self) -> Optional[int]:
-        self.ctrl.clickMap()
+        self.ctrl.click_map()
         time.sleep(0.1)
         screen_map = cv.cvtColor(np.array(self.ctrl.adb.on_frame()), cv.COLOR_RGB2BGR)
         room_num = self.get_user_position(screen_map)
-        self.ctrl.clickMap()
+        self.ctrl.click_map()
         print(f"当前房间号: {room_num}")
         return room_num
 
@@ -237,7 +238,7 @@ class GameAction:
         if again_times == 2:
             self.unSZT = True
             print("开始下一局")
-            self.ctrl.clickAgain()
+            self.ctrl.click_again()
             time.sleep(4)
             again_times = 0
             self.roomNum = 0
@@ -255,7 +256,7 @@ class GameAction:
         if action_type == 'attack':
             self.adb.tap(sx, sy, move_t * 0.7)
             print("攻击怪物")
-            self.ctrl.attackCombine(len(self.monster))
+            self.ctrl.attack_combine(len(self.monster))
         elif action_type == 'item':
             self.adb.tap(sx, sy, move_t)
         elif action_type == 'move':
