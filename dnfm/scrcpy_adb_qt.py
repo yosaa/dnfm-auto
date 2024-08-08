@@ -1,7 +1,6 @@
 import pygetwindow as gw
 from PIL import ImageGrab
 import cv2 as cv
-import numpy as np
 import time
 import pyautogui
 from yolov5 import YoloV5s
@@ -15,56 +14,49 @@ class scrcpyQt:
                             nms_threshold=0.45,
                             num_threads=4,
                             use_gpu=True)
-        # self.device = torch.device(
-        #     'cuda' if torch.cuda.is_available() else 'cpu')
-        # self.yolo = torch.hub.load('D:/yolo/dnfm-yolo-tutorial-master/yolov5', 'custom',
-        #                            'D:/yolo/dnfm-yolo-tutorial-master/yolov5/best.pt', source='local').to(self.device)
         self.windowsInfo = (0, 0, 0, 0)
         pyautogui.FAILSAFE = False
 
+    # 定义一个名为on_frame的方法，这个方法属于一个类，因为使用了self参数
     def on_frame(self):
         try:
+            # 尝试执行以下代码块
+            # gw是getwindows的缩写，可能是一个获取窗口列表的函数或方法
+            # getWindowsWithTitle是一个方法，用于获取所有包含指定标题的窗口
+            # self.window_title是类的一个属性，存储了要捕获的窗口的标题
+            # [0]表示获取列表中的第一个窗口，假设只有一个窗口匹配
             window = gw.getWindowsWithTitle(self.window_title)[0]
+            
+            # 检查是否成功获取到了窗口对象
             if window:
+                # 如果获取到了窗口，调用其restore方法，可能是还原窗口大小
                 window.restore()
+                # 调用其activate方法，激活窗口，使其成为当前窗口
                 window.activate()
+                # 使用time.sleep暂停0.1秒，等待窗口完全激活
                 time.sleep(0.1)  # 等待窗口完全激活
 
+                # 获取窗口的位置和大小信息
+                # left, top是窗口左上角的坐标
+                # width, height是窗口的宽度和高度
                 x, y, width, height = window.left, window.top, window.width, window.height
+                
+                # 将窗口的位置和大小信息存储到self.windowsInfo属性中
                 self.windowsInfo = (x, y, width, height)
 
+                # 使用ImageGrab模块的grab方法来截取指定窗口的屏幕图像
+                # bbox参数定义了截图的边界框，即窗口的左上角坐标和右下角坐标
                 screen = ImageGrab.grab(bbox=(x, y, x + width, y + height))
-                screen_np = cv.cvtColor(np.array(screen), cv.COLOR_RGB2BGR)
-                # self.last_screen = screen_np
+                # 函数返回截取的屏幕图像
                 return screen
+            
+        # 捕获并处理在执行上述代码时可能发生的任何异常
         except Exception as e:
+            # 打印异常信息
             print(f"An error occurred: {e}")
 
-    def getXY(self, screen_np):
-        try:
-            result = self.yolo(screen_np)
-            for obj in result:
-                color = (0, 255, 0)
-                if obj.label == 1:
-                    color = (255, 0, 0)
-                elif obj.label == 5:
-                    color = (0, 0, 255)
-                else:
-                    color = (0, 0, 255)
-
-                cv.rectangle(screen_np,
-                             (int(obj.rect.x), int(obj.rect.y)),
-                             (int(obj.rect.x + obj.rect.w),
-                              int(obj.rect.y + + obj.rect.h)),
-                             color, 2
-                             )
-            # cv.imshow('frame', screen_np)
-            # cv.waitKey(3000)
-        except Exception as e:
-            print(e)
-
     def touch_start(self, x: int or float, y: int or float):
-        pyautogui.moveTo(x, y, duration=0.4)  # 移动到指定位置，持续时间0.25秒
+        pyautogui.moveTo(x, y, duration=0.4)  # 移动到指定位置，持续时间0.4秒
         pyautogui.mouseDown()  # 模拟按下
 
     def touch_move(self, x: int or float, y: int or float):
@@ -78,46 +70,5 @@ class scrcpyQt:
         time.sleep(t)
         self.touch_end(x, y)
 
-    def compare_images_flann(main_image_path, sub_image_path):
-        # 读取图片
-        main_image = cv2.imread(main_image_path, cv2.IMREAD_GRAYSCALE)
-        sub_image = cv2.imread(sub_image_path, cv2.IMREAD_GRAYSCALE)
-
-        # 检查图片是否正确加载
-        if main_image is None or sub_image is None:
-            print("Error: 图片加载失败，请检查路径是否正确")
-            return False
-
-        # 使用SIFT算法提取特征点
-        sift = cv2.SIFT_create()
-        keypoints1, descriptors1 = sift.detectAndCompute(main_image, None)
-        keypoints2, descriptors2 = sift.detectAndCompute(sub_image, None)
-
-        # 如果特征点数量太少，则认为匹配失败
-        if len(keypoints1) < 10 or len(keypoints2) < 10:
-            print("Error: 特征点数量太少，无法进行匹配")
-            return False
-
-        # 使用FLANN匹配器进行特征匹配
-        flann = cv2.FlannBasedMatcher()
-        matches = flann.knnMatch(descriptors1, descriptors2, k=2)
-
-        good_matches = []
-        for m, n in matches:
-            if m.distance < 0.7 * n.distance:
-                good_matches.append(m)
-
-        MIN_MATCH_COUNT = 10
-        if len(good_matches) > MIN_MATCH_COUNT:
-            return True
-        else:
-            return False
-
-
-def main():
-    window_title = "Phone-f0d62d51"
-
-
-
 if __name__ == "__main__":
-    main()
+    window_title = "Phone-f0d62d51"

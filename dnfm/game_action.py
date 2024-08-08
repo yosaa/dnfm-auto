@@ -35,7 +35,7 @@ def match_template(main_image: np.ndarray, sub_image: np.ndarray) -> bool:
     flann = cv.FlannBasedMatcher()
     matches = flann.knnMatch(descriptors1, descriptors2, k=2)
     good_matches = [m for m, n in matches if m.distance < 0.7 * n.distance]
-
+    print(good_matches)
     return len(good_matches) > 10
 
 def find_blue_color(image: np.ndarray) -> Tuple[int, int]:
@@ -219,7 +219,7 @@ class GameAction:
         self.ctrl.attackJX()
 
     def get_user_position(self, image: np.ndarray) -> Optional[int]:
-        x1, y1, x2, y2 = map(int, self.ctrl.getMapXY())
+        x1, y1, x2, y2 = map(int, self.ctrl.get_map_xy())
         cropped_image = image[y1:y2, x1:x2]
         height, width, _ = cropped_image.shape
 

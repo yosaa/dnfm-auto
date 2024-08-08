@@ -139,13 +139,13 @@ class GameControl:
         self.adb.touch_end(x, y)
 
     def click_again(self):
-        self._click_position(0.86, 0.25)
+        self.adb.tap(0.86, 0.25)
 
     def get_item_height(self) -> float:
         return self.windowsInfo[3] * 0.07
 
     def click_map(self):
-        self._click_position(0.90, 0.186)
+        self.adb.tap(0.90, 0.186)
 
     def get_map_xy(self) -> Tuple[float, float, float, float]:
         return (self.windowsInfo[2] * 0.380, self.windowsInfo[3] * 0.380,
@@ -208,5 +208,4 @@ if __name__ == '__main__':
     window_title = "Phone-f0d62d51"
     ctl = GameControl(scrcpyQt(window_title), window_title)
     ctl.get_window_xy()
-
     ctl.attack_fixed(1)
