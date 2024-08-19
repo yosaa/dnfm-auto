@@ -3,7 +3,7 @@ from PIL import ImageGrab
 import cv2 as cv
 import time
 import pyautogui
-from yolov5 import YoloV5s
+from .yolov5 import YoloV5s
 
 
 class scrcpyQt:

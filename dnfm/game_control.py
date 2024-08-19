@@ -3,7 +3,7 @@ import math
 import random
 from typing import Tuple
 import pygetwindow as gw
-from scrcpy_adb_qt import scrcpyQt
+from .scrcpy_adb_qt import scrcpyQt
 
 
 class GameControl:
@@ -208,4 +208,4 @@ if __name__ == '__main__':
     window_title = "Phone-f0d62d51"
     ctl = GameControl(scrcpyQt(window_title), window_title)
     ctl.get_window_xy()
-    ctl.attack_fixed(1)
+    ctl.attack()

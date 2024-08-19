@@ -3,9 +3,9 @@ import math
 import time
 import cv2 as cv
 import numpy as np
-from yolov5 import YoloV5s
-from game_control import GameControl
-from scrcpy_adb_qt import scrcpyQt
+from .yolov5 import YoloV5s
+from .game_control import GameControl
+from .scrcpy_adb_qt import scrcpyQt
 import random
 from ncnn.utils.objects import Detect_Object
 
@@ -35,7 +35,7 @@ def match_template(main_image: np.ndarray, sub_image: np.ndarray) -> bool:
     flann = cv.FlannBasedMatcher()
     matches = flann.knnMatch(descriptors1, descriptors2, k=2)
     good_matches = [m for m, n in matches if m.distance < 0.7 * n.distance]
-    print(good_matches)
+    # print(good_matches)
     return len(good_matches) > 10
 
 def find_blue_color(image: np.ndarray) -> Tuple[int, int]:
@@ -63,16 +63,16 @@ class GameAction:
         self.yolo = YoloV5s(target_size=640, prob_threshold=0.25, nms_threshold=0.45, num_threads=4, use_gpu=True)
         self.adb = self.ctrl.adb
         self.moves = [self.ctrl.moveLU, self.ctrl.moveRD]
-        self.templates = [cv.imread(f'dnfm\\img\\SZT_{status}.png', cv.IMREAD_GRAYSCALE) for status in ['no', 'yes', 'ing']]
-        self.template_names = ['SZT_no', 'SZT_yes', 'SZT_ing']
-        self.AGAIN = cv.imread('dnfm\\img\\again.png')
+        # self.templates = [cv.imread(f'dnfm\\img\\SZT_{status}.png', cv.IMREAD_GRAYSCALE) for status in ['no', 'yes', 'ing']]
+        # self.template_names = ['SZT_no', 'SZT_yes', 'SZT_ing']
+        self.AGAIN = cv.imread('./dnfm/img/again.png')
         self.itemY = self.ctrl.get_item_height()
         self.true_count = 0
         self.next_room = False
         self.roomNum = 0
         self.unSZT = True
 
-    def move_to_next_room(self):
+    def start(self):
         t = time.time()
         noHeroCount = 0
         fake_random = True
@@ -268,5 +268,5 @@ if __name__ == '__main__':
     action = GameAction(ctrl)
 
     while True:
-        action.move_to_next_room()
+        action.start()
         time.sleep(3)
