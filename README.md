@@ -1,8 +1,13 @@
 ## 基于 YOLOv5 模型实现布万家自动化搬砖
 
 ## 项目演示
+
 项目根目录的 `demo_video.pm4` 为演示视频  
 ![演示视频](https://github.com/yosaa/dnfm-auto/blob/main/demo_video.gif)
+
+## 
+
+## 简略说明 | [详细步骤01](./doc/逐行代码讲解_01.md)|[详细步骤02]([青梓津 - 知乎 (zhihu.com)](https://www.zhihu.com/people/luo-mai-qing))
 
 ## 启动方式
 
@@ -14,11 +19,15 @@
    将 `main.py` 中的 `window_title` 修改为投屏窗口的名称
 5. **运行项目**  
    执行命令：  
+   
    ```bash
    python main.py
    ```
 
+
+
 ## 定位和调整
+
 如果点击的位置不正确，可以通过修改 `game_control.py` 中的坐标进行调整：
 
 1. **技能范围配置**  
@@ -56,6 +65,7 @@
 4. **投屏方案限制**：投屏方案占用鼠标，仅作为思路参考
 
 ## 
+
 ## 自定义模型训练
 
 上传的权重文件仅支持测试角色，如果识别不准确，可以按照以下教程自行训练模型。
@@ -65,6 +75,7 @@
 [Label Studio Documentation — Quick start guide for Label Studio](https://labelstud.io/guide/quick_start)
 
 标注工具启动方式：
+
 ```bash
 label-studio start
 ```
