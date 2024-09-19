@@ -7,7 +7,7 @@
 
 ## 
 
-## 简略说明 | [详细步骤01](./doc/逐行代码讲解_01.md)|[详细步骤02]([青梓津 - 知乎 (zhihu.com)](https://www.zhihu.com/people/luo-mai-qing))
+## 简略说明 | [详细步骤01](./doc/逐行代码讲解_01.md)|[详细步骤02](https://www.zhihu.com/people/luo-mai-qing)
 
 ## 启动方式
 
