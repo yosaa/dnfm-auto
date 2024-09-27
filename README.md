@@ -91,13 +91,16 @@ label-studio start
 ### pt 转 ncnn 步骤
 
 ```bash
-# 在 YOLOv5 根目录执行以下命令
+# 在 YOLOv5 根目录执行以下命令 (遇到参数报错，一般是版本问题，我这里用的是yolo5.6)
 python export.py --weights best.pt --img 460 --batch 1 --train
 python -m onnxsim best.onnx best-sim.onnx
+
 
 # 使用官方转换工具
 ./onnx2ncnn ./model/best-sim.onnx model/best.param model/best.bin
 ```
+[转化模型可参考文档](https://github.com/HuPengsheet/use-ncnn/blob/main/notes/ncnn03-onnx%E8%BD%ACncnn%E6%A8%A1%E5%9E%8B%E8%B7%91yolov5-6.0.md)
+
 
 ## 注意事项
 
